@@ -1,0 +1,24 @@
+# Byte-compiled
+*.pyc
+*.pyo
+__pycache__/
+
+# Estado local del puesto (no se versiona)
+GAMMA.ini
+gamma_settings.json
+
+# Logs
+/log/
+*.log
+
+# Salidas que la aplicacion regenera para el interfaz externo
+GAMMA_interface/Cesium_file.txt
+GAMMA_interface/flightstrips.txt
+
+# Editores / herramientas
+.idea/workspace.xml
+.vscode/launch.json
+.claude/settings.local.json
+
+# Ejercicios locales
+LEMD/
