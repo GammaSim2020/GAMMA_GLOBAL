@@ -575,7 +575,6 @@ class UCS(RaDisplay):
                                 pass
 
                 else:
-                    # self.write_flightstrips_file()
                     if hasattr(self, 'atc_bahia') and self.atc_bahia.showed:
                         self.atc_bahia.update()
 

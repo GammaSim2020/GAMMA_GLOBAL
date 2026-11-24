@@ -213,9 +213,7 @@ class EditDisplay(RaDisplay):
         if m['message']=='update':
             flights = m['flights']
             for f in flights: update_flight(f)
-            # self.write_flightstrips_file()
             self.write_Cesium_file()
-            # self.write_CZML_file()
             self.wind = m['wind']
             self.metar = m['metar']
             self.update_wind(self.wind,self.metar)

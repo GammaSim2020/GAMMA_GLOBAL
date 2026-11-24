@@ -44,7 +44,6 @@ from Exercise import Exercise
 import TLPV
 import socket
 import openpyxl
-import json
 try:
     from alertas import AlertManager
 except ImportError:
@@ -757,8 +756,6 @@ class GTA:
                                   'radar_off': self.radar_off,
                                   'correlar_off': self.correlar_off,
                                   'qnh': self.qnh})
-        #self.write_json_file(flight_updates_Unity)
-        #self.write_viewer_file()
         #self.last_update = self.t
         """
         # Send updates to clients (now with parallelization)
@@ -798,24 +795,6 @@ class GTA:
         d.addCallback(broadcast_serialized)
         d.addErrback(lambda failure: logging.error("Broadcast serialization failed: %s" % failure))
         # ========== FIN PARALELIZACION ==========
-
-    def jsonDefault(self, object):
-        return object.__dict__
-
-    def write_json_file(self, fu):  # Write Json file for Controller representation in Unity
-        jsonJander = json.dumps(fu, default=self.jsonDefault)
-        # print(jsonJander)
-
-        escenario = [
-            {"ad": self.fir.aerodromes.keys()[0]},  # DJCM: Cuidado, Si hay varios ad, solo pasamos el primero
-            {"arp": [self.fir.y0, self.fir.x0]}  # coordinates of the arp
-        ]
-        jsonFile = open("GAMMA_interface/jsonOSF.json", "w")
-        jsonFile.write('{"time":' + '"' + str(self.t) + '",' + '"weather":' + '"' + str(self.metar.split()[4]) + '"' +
-                       ',' + '"escenario":' + json.dumps(escenario) +
-                       ',' + '"flights":' + jsonJander + '}')
-        jsonFile.close()
-
 
     #### Inicio prueba nuevo controlador de mensajes
     def process_message(self, m, p):

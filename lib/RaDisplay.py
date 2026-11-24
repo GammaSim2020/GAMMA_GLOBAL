@@ -8,6 +8,7 @@ from tkFont import Font
 from twisted.internet import reactor, threads
 import Tkinter as tk
 import Tix as tix
+import os
 import Aircraft
 
 from RaElements import *
@@ -1570,6 +1571,16 @@ class RaDisplay(object):
         else:
             visual = 0
         file = conf.cesium_dir + '/GAMMA_interface/Cesium_file.txt'
+        # La carpeta destino esta en cesium_dir (C:\GAMMA), que es donde lee el
+        # fichero la aplicacion externa; en un puesto nuevo puede no existir aun.
+        dir_cesium = os.path.dirname(file)
+        if not os.path.isdir(dir_cesium):
+            try:
+                os.makedirs(dir_cesium)
+            except OSError:
+                logging.warning('No se pudo crear la carpeta %s del fichero de Cesium'
+                                % dir_cesium)
+                return
         output_date = "%04d-%02d-%02dT%02d:%02d:%06.3fZ" % (
         self.t.year, self.t.month, self.t.day, self.t.hour, self.t.minute, self.t.second + self.t.microsecond * 1e-6)
         output_visual = "%s\n" % (visual)

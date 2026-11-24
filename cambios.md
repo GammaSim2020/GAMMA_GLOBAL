@@ -2,6 +2,45 @@
 
 ---
 
+## [2026-11-24] Fuera los ficheros de interfaz que ya no se usan (jsonOSF.json, flightstrips.txt) — GTA.py, RaDisplay.py, UCS.py, Editor.py
+
+**Archivos:** `lib/GTA.py` — `write_json_file()`, `jsonDefault()`, `update_clients()`;
+`lib/RaDisplay.py` — `write_Cesium_file()`; `lib/UCS.py` — `process_message()`;
+`lib/Editor.py` — `process_message()`
+
+`GAMMA_interface/jsonOSF.json` y `GAMMA_interface/flightstrips.txt` ya no los consume
+nadie, asi que se retira todo lo que los generaba o los mencionaba. Ninguno de los dos
+se escribia ya en ejecucion, de modo que el cambio no altera el comportamiento: lo que
+hace es quitar codigo muerto que confundia al leer el modulo.
+
+1. **`jsonOSF.json`**: lo escribia `GTA.write_json_file()`, cuya unica llamada
+   (`#self.write_json_file(flight_updates_Unity)`) estaba **dentro del bloque `"""..."""`**
+   de codigo antiguo de `update_clients()`, es decir, nunca se ejecutaba; el fichero
+   versionado era de hecho una muestra de julio de 2022 con LEMD dentro. Se eliminan
+   `write_json_file()`, su auxiliar `jsonDefault()` (solo lo usaba ella) y el
+   `import json` de GTA (era su unico uso en todo el modulo). De paso salen del bloque
+   muerto las llamadas comentadas a `write_json_file()` y a `write_viewer_file()`
+   (este ultimo metodo ni siquiera existe).
+2. **`flightstrips.txt`**: el metodo `write_flightstrips_file()` ya no existia en
+   ningun modulo; solo quedaban **dos llamadas comentadas** (`UCS.process_message()` y
+   `Editor.process_message()`), que se retiran junto con la de `write_CZML_file()`
+   (metodo igualmente inexistente). **Sin relacion con el mensaje de red
+   `'flightstrips'`** (`GTA`, `TLPV.get_sector_flightstrips()`, `FlightStripData`,
+   `RemoteClient`, `RaDisplay.fs_list`), que es la via real de las fichas GTA->clientes
+   y se mantiene intacta.
+3. Ficheros borrados del arbol: `GAMMA_interface/jsonOSF.json` (estaba versionado) y
+   `GAMMA_interface/flightstrips.txt`. Retirada tambien su regla del `.gitignore`.
+4. **`RaDisplay.write_Cesium_file()` crea la carpeta destino si no existe.** Es el unico
+   fichero de interfaz que sigue vivo (lo lee una aplicacion externa) y se escribe en
+   `conf.cesium_dir + '/GAMMA_interface/Cesium_file.txt'`, o sea `C:\GAMMA\GAMMA_interface\Cesium_file.txt`,
+   que **no** es el arbol del programa. En un puesto donde esa carpeta no exista, el
+   `open()` lanzaba la excepcion dentro del `process_message()` del cliente; ahora se
+   intenta `os.makedirs()` y, si falla, se avisa por log y se sale sin romper el ciclo de
+   actualizacion. Anadido `import os` explicito en `RaDisplay` (antes llegaba por el
+   `from RaElements import *`).
+
+---
+
 ## [2026-11-24] La bahia de fichas (ATCBahia) deja de tener formato de Barajas — RaElements.py, FIR.py
 
 **Archivo:** `lib/RaElements.py` — `ATCBahia.update()`, `insertar_ficha()` (antes `insertar_ficha_estandar()`), `_ficha_lemd()`, `_es_ad_principal()`, `insertar_ficha_LEMD()`, `leftclicked_LEMD()`, `openTaxiKeyboard()`, `openRedFreeTextKeyboard()`; `lib/FIR.py` — `_default_params()`

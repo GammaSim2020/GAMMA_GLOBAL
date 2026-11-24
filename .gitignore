@@ -13,7 +13,6 @@ gamma_settings.json
 
 # Salidas que la aplicacion regenera para el interfaz externo
 GAMMA_interface/Cesium_file.txt
-GAMMA_interface/flightstrips.txt
 
 # Editores / herramientas
 .idea/workspace.xml
